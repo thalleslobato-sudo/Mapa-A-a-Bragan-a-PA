@@ -1,0 +1,1560 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mapa do Açaí · Bragança-PA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>/* required styles */
+
+.leaflet-pane,
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-tile-container,
+.leaflet-pane > svg,
+.leaflet-pane > canvas,
+.leaflet-zoom-box,
+.leaflet-image-layer,
+.leaflet-layer {
+	position: absolute;
+	left: 0;
+	top: 0;
+	}
+.leaflet-container {
+	overflow: hidden;
+	}
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+	-webkit-user-select: none;
+	   -moz-user-select: none;
+	        user-select: none;
+	  -webkit-user-drag: none;
+	}
+/* Prevents IE11 from highlighting tiles in blue */
+.leaflet-tile::selection {
+	background: transparent;
+}
+/* Safari renders non-retina tile on retina better with this, but Chrome is worse */
+.leaflet-safari .leaflet-tile {
+	image-rendering: -webkit-optimize-contrast;
+	}
+/* hack that prevents hw layers "stretching" when loading new tiles */
+.leaflet-safari .leaflet-tile-container {
+	width: 1600px;
+	height: 1600px;
+	-webkit-transform-origin: 0 0;
+	}
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+	display: block;
+	}
+/* .leaflet-container svg: reset svg max-width decleration shipped in Joomla! (joomla.org) 3.x */
+/* .leaflet-container img: map is broken in FF if you have max-width: 100% on tiles */
+.leaflet-container .leaflet-overlay-pane svg {
+	max-width: none !important;
+	max-height: none !important;
+	}
+.leaflet-container .leaflet-marker-pane img,
+.leaflet-container .leaflet-shadow-pane img,
+.leaflet-container .leaflet-tile-pane img,
+.leaflet-container img.leaflet-image-layer,
+.leaflet-container .leaflet-tile {
+	max-width: none !important;
+	max-height: none !important;
+	width: auto;
+	padding: 0;
+	}
+
+.leaflet-container img.leaflet-tile {
+	/* See: https://bugs.chromium.org/p/chromium/issues/detail?id=600120 */
+	mix-blend-mode: plus-lighter;
+}
+
+.leaflet-container.leaflet-touch-zoom {
+	-ms-touch-action: pan-x pan-y;
+	touch-action: pan-x pan-y;
+	}
+.leaflet-container.leaflet-touch-drag {
+	-ms-touch-action: pinch-zoom;
+	/* Fallback for FF which doesn't support pinch-zoom */
+	touch-action: none;
+	touch-action: pinch-zoom;
+}
+.leaflet-container.leaflet-touch-drag.leaflet-touch-zoom {
+	-ms-touch-action: none;
+	touch-action: none;
+}
+.leaflet-container {
+	-webkit-tap-highlight-color: transparent;
+}
+.leaflet-container a {
+	-webkit-tap-highlight-color: rgba(51, 181, 229, 0.4);
+}
+.leaflet-tile {
+	filter: inherit;
+	visibility: hidden;
+	}
+.leaflet-tile-loaded {
+	visibility: inherit;
+	}
+.leaflet-zoom-box {
+	width: 0;
+	height: 0;
+	-moz-box-sizing: border-box;
+	     box-sizing: border-box;
+	z-index: 800;
+	}
+/* workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=888319 */
+.leaflet-overlay-pane svg {
+	-moz-user-select: none;
+	}
+
+.leaflet-pane         { z-index: 400; }
+
+.leaflet-tile-pane    { z-index: 200; }
+.leaflet-overlay-pane { z-index: 400; }
+.leaflet-shadow-pane  { z-index: 500; }
+.leaflet-marker-pane  { z-index: 600; }
+.leaflet-tooltip-pane   { z-index: 650; }
+.leaflet-popup-pane   { z-index: 700; }
+
+.leaflet-map-pane canvas { z-index: 100; }
+.leaflet-map-pane svg    { z-index: 200; }
+
+.leaflet-vml-shape {
+	width: 1px;
+	height: 1px;
+	}
+.lvml {
+	behavior: url(#default#VML);
+	display: inline-block;
+	position: absolute;
+	}
+
+
+/* control positioning */
+
+.leaflet-control {
+	position: relative;
+	z-index: 800;
+	pointer-events: visiblePainted; /* IE 9-10 doesn't have auto */
+	pointer-events: auto;
+	}
+.leaflet-top,
+.leaflet-bottom {
+	position: absolute;
+	z-index: 1000;
+	pointer-events: none;
+	}
+.leaflet-top {
+	top: 0;
+	}
+.leaflet-right {
+	right: 0;
+	}
+.leaflet-bottom {
+	bottom: 0;
+	}
+.leaflet-left {
+	left: 0;
+	}
+.leaflet-control {
+	float: left;
+	clear: both;
+	}
+.leaflet-right .leaflet-control {
+	float: right;
+	}
+.leaflet-top .leaflet-control {
+	margin-top: 10px;
+	}
+.leaflet-bottom .leaflet-control {
+	margin-bottom: 10px;
+	}
+.leaflet-left .leaflet-control {
+	margin-left: 10px;
+	}
+.leaflet-right .leaflet-control {
+	margin-right: 10px;
+	}
+
+
+/* zoom and fade animations */
+
+.leaflet-fade-anim .leaflet-popup {
+	opacity: 0;
+	-webkit-transition: opacity 0.2s linear;
+	   -moz-transition: opacity 0.2s linear;
+	        transition: opacity 0.2s linear;
+	}
+.leaflet-fade-anim .leaflet-map-pane .leaflet-popup {
+	opacity: 1;
+	}
+.leaflet-zoom-animated {
+	-webkit-transform-origin: 0 0;
+	    -ms-transform-origin: 0 0;
+	        transform-origin: 0 0;
+	}
+svg.leaflet-zoom-animated {
+	will-change: transform;
+}
+
+.leaflet-zoom-anim .leaflet-zoom-animated {
+	-webkit-transition: -webkit-transform 0.25s cubic-bezier(0,0,0.25,1);
+	   -moz-transition:    -moz-transform 0.25s cubic-bezier(0,0,0.25,1);
+	        transition:         transform 0.25s cubic-bezier(0,0,0.25,1);
+	}
+.leaflet-zoom-anim .leaflet-tile,
+.leaflet-pan-anim .leaflet-tile {
+	-webkit-transition: none;
+	   -moz-transition: none;
+	        transition: none;
+	}
+
+.leaflet-zoom-anim .leaflet-zoom-hide {
+	visibility: hidden;
+	}
+
+
+/* cursors */
+
+.leaflet-interactive {
+	cursor: pointer;
+	}
+.leaflet-grab {
+	cursor: -webkit-grab;
+	cursor:    -moz-grab;
+	cursor:         grab;
+	}
+.leaflet-crosshair,
+.leaflet-crosshair .leaflet-interactive {
+	cursor: crosshair;
+	}
+.leaflet-popup-pane,
+.leaflet-control {
+	cursor: auto;
+	}
+.leaflet-dragging .leaflet-grab,
+.leaflet-dragging .leaflet-grab .leaflet-interactive,
+.leaflet-dragging .leaflet-marker-draggable {
+	cursor: move;
+	cursor: -webkit-grabbing;
+	cursor:    -moz-grabbing;
+	cursor:         grabbing;
+	}
+
+/* marker & overlays interactivity */
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-image-layer,
+.leaflet-pane > svg path,
+.leaflet-tile-container {
+	pointer-events: none;
+	}
+
+.leaflet-marker-icon.leaflet-interactive,
+.leaflet-image-layer.leaflet-interactive,
+.leaflet-pane > svg path.leaflet-interactive,
+svg.leaflet-image-layer.leaflet-interactive path {
+	pointer-events: visiblePainted; /* IE 9-10 doesn't have auto */
+	pointer-events: auto;
+	}
+
+/* visual tweaks */
+
+.leaflet-container {
+	background: #ddd;
+	outline-offset: 1px;
+	}
+.leaflet-container a {
+	color: #0078A8;
+	}
+.leaflet-zoom-box {
+	border: 2px dotted #38f;
+	background: rgba(255,255,255,0.5);
+	}
+
+
+/* general typography */
+.leaflet-container {
+	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-size: 0.75rem;
+	line-height: 1.5;
+	}
+
+
+/* general toolbar styles */
+
+.leaflet-bar {
+	box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+	border-radius: 4px;
+	}
+.leaflet-bar a {
+	background-color: #fff;
+	border-bottom: 1px solid #ccc;
+	width: 26px;
+	height: 26px;
+	line-height: 26px;
+	display: block;
+	text-align: center;
+	text-decoration: none;
+	color: black;
+	}
+.leaflet-bar a,
+.leaflet-control-layers-toggle {
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	display: block;
+	}
+.leaflet-bar a:hover,
+.leaflet-bar a:focus {
+	background-color: #f4f4f4;
+	}
+.leaflet-bar a:first-child {
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+	}
+.leaflet-bar a:last-child {
+	border-bottom-left-radius: 4px;
+	border-bottom-right-radius: 4px;
+	border-bottom: none;
+	}
+.leaflet-bar a.leaflet-disabled {
+	cursor: default;
+	background-color: #f4f4f4;
+	color: #bbb;
+	}
+
+.leaflet-touch .leaflet-bar a {
+	width: 30px;
+	height: 30px;
+	line-height: 30px;
+	}
+.leaflet-touch .leaflet-bar a:first-child {
+	border-top-left-radius: 2px;
+	border-top-right-radius: 2px;
+	}
+.leaflet-touch .leaflet-bar a:last-child {
+	border-bottom-left-radius: 2px;
+	border-bottom-right-radius: 2px;
+	}
+
+/* zoom control */
+
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+	font: bold 18px 'Lucida Console', Monaco, monospace;
+	text-indent: 1px;
+	}
+
+.leaflet-touch .leaflet-control-zoom-in, .leaflet-touch .leaflet-control-zoom-out  {
+	font-size: 22px;
+	}
+
+
+/* layers control */
+
+.leaflet-control-layers {
+	box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+	background: #fff;
+	border-radius: 5px;
+	}
+.leaflet-control-layers-toggle {
+	background-image: url(images/layers.png);
+	width: 36px;
+	height: 36px;
+	}
+.leaflet-retina .leaflet-control-layers-toggle {
+	background-image: url(images/layers-2x.png);
+	background-size: 26px 26px;
+	}
+.leaflet-touch .leaflet-control-layers-toggle {
+	width: 44px;
+	height: 44px;
+	}
+.leaflet-control-layers .leaflet-control-layers-list,
+.leaflet-control-layers-expanded .leaflet-control-layers-toggle {
+	display: none;
+	}
+.leaflet-control-layers-expanded .leaflet-control-layers-list {
+	display: block;
+	position: relative;
+	}
+.leaflet-control-layers-expanded {
+	padding: 6px 10px 6px 6px;
+	color: #333;
+	background: #fff;
+	}
+.leaflet-control-layers-scrollbar {
+	overflow-y: scroll;
+	overflow-x: hidden;
+	padding-right: 5px;
+	}
+.leaflet-control-layers-selector {
+	margin-top: 2px;
+	position: relative;
+	top: 1px;
+	}
+.leaflet-control-layers label {
+	display: block;
+	font-size: 13px;
+	font-size: 1.08333em;
+	}
+.leaflet-control-layers-separator {
+	height: 0;
+	border-top: 1px solid #ddd;
+	margin: 5px -10px 5px -6px;
+	}
+
+/* Default icon URLs */
+.leaflet-default-icon-path { /* used only in path-guessing heuristic, see L.Icon.Default */
+	background-image: url(images/marker-icon.png);
+	}
+
+
+/* attribution and scale controls */
+
+.leaflet-container .leaflet-control-attribution {
+	background: #fff;
+	background: rgba(255, 255, 255, 0.8);
+	margin: 0;
+	}
+.leaflet-control-attribution,
+.leaflet-control-scale-line {
+	padding: 0 5px;
+	color: #333;
+	line-height: 1.4;
+	}
+.leaflet-control-attribution a {
+	text-decoration: none;
+	}
+.leaflet-control-attribution a:hover,
+.leaflet-control-attribution a:focus {
+	text-decoration: underline;
+	}
+.leaflet-attribution-flag {
+	display: inline !important;
+	vertical-align: baseline !important;
+	width: 1em;
+	height: 0.6669em;
+	}
+.leaflet-left .leaflet-control-scale {
+	margin-left: 5px;
+	}
+.leaflet-bottom .leaflet-control-scale {
+	margin-bottom: 5px;
+	}
+.leaflet-control-scale-line {
+	border: 2px solid #777;
+	border-top: none;
+	line-height: 1.1;
+	padding: 2px 5px 1px;
+	white-space: nowrap;
+	-moz-box-sizing: border-box;
+	     box-sizing: border-box;
+	background: rgba(255, 255, 255, 0.8);
+	text-shadow: 1px 1px #fff;
+	}
+.leaflet-control-scale-line:not(:first-child) {
+	border-top: 2px solid #777;
+	border-bottom: none;
+	margin-top: -2px;
+	}
+.leaflet-control-scale-line:not(:first-child):not(:last-child) {
+	border-bottom: 2px solid #777;
+	}
+
+.leaflet-touch .leaflet-control-attribution,
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+	box-shadow: none;
+	}
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+	border: 2px solid rgba(0,0,0,0.2);
+	background-clip: padding-box;
+	}
+
+
+/* popup */
+
+.leaflet-popup {
+	position: absolute;
+	text-align: center;
+	margin-bottom: 20px;
+	}
+.leaflet-popup-content-wrapper {
+	padding: 1px;
+	text-align: left;
+	border-radius: 12px;
+	}
+.leaflet-popup-content {
+	margin: 13px 24px 13px 20px;
+	line-height: 1.3;
+	font-size: 13px;
+	font-size: 1.08333em;
+	min-height: 1px;
+	}
+.leaflet-popup-content p {
+	margin: 17px 0;
+	margin: 1.3em 0;
+	}
+.leaflet-popup-tip-container {
+	width: 40px;
+	height: 20px;
+	position: absolute;
+	left: 50%;
+	margin-top: -1px;
+	margin-left: -20px;
+	overflow: hidden;
+	pointer-events: none;
+	}
+.leaflet-popup-tip {
+	width: 17px;
+	height: 17px;
+	padding: 1px;
+
+	margin: -10px auto 0;
+	pointer-events: auto;
+
+	-webkit-transform: rotate(45deg);
+	   -moz-transform: rotate(45deg);
+	    -ms-transform: rotate(45deg);
+	        transform: rotate(45deg);
+	}
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+	background: white;
+	color: #333;
+	box-shadow: 0 3px 14px rgba(0,0,0,0.4);
+	}
+.leaflet-container a.leaflet-popup-close-button {
+	position: absolute;
+	top: 0;
+	right: 0;
+	border: none;
+	text-align: center;
+	width: 24px;
+	height: 24px;
+	font: 16px/24px Tahoma, Verdana, sans-serif;
+	color: #757575;
+	text-decoration: none;
+	background: transparent;
+	}
+.leaflet-container a.leaflet-popup-close-button:hover,
+.leaflet-container a.leaflet-popup-close-button:focus {
+	color: #585858;
+	}
+.leaflet-popup-scrolled {
+	overflow: auto;
+	}
+
+.leaflet-oldie .leaflet-popup-content-wrapper {
+	-ms-zoom: 1;
+	}
+.leaflet-oldie .leaflet-popup-tip {
+	width: 24px;
+	margin: 0 auto;
+
+	-ms-filter: "progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678)";
+	filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678);
+	}
+
+.leaflet-oldie .leaflet-control-zoom,
+.leaflet-oldie .leaflet-control-layers,
+.leaflet-oldie .leaflet-popup-content-wrapper,
+.leaflet-oldie .leaflet-popup-tip {
+	border: 1px solid #999;
+	}
+
+
+/* div icon */
+
+.leaflet-div-icon {
+	background: #fff;
+	border: 1px solid #666;
+	}
+
+
+/* Tooltip */
+/* Base styles for the element that has a tooltip */
+.leaflet-tooltip {
+	position: absolute;
+	padding: 6px;
+	background-color: #fff;
+	border: 1px solid #fff;
+	border-radius: 3px;
+	color: #222;
+	white-space: nowrap;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	pointer-events: none;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+	}
+.leaflet-tooltip.leaflet-interactive {
+	cursor: pointer;
+	pointer-events: auto;
+	}
+.leaflet-tooltip-top:before,
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+	position: absolute;
+	pointer-events: none;
+	border: 6px solid transparent;
+	background: transparent;
+	content: "";
+	}
+
+/* Directions */
+
+.leaflet-tooltip-bottom {
+	margin-top: 6px;
+}
+.leaflet-tooltip-top {
+	margin-top: -6px;
+}
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-top:before {
+	left: 50%;
+	margin-left: -6px;
+	}
+.leaflet-tooltip-top:before {
+	bottom: 0;
+	margin-bottom: -12px;
+	border-top-color: #fff;
+	}
+.leaflet-tooltip-bottom:before {
+	top: 0;
+	margin-top: -12px;
+	margin-left: -6px;
+	border-bottom-color: #fff;
+	}
+.leaflet-tooltip-left {
+	margin-left: -6px;
+}
+.leaflet-tooltip-right {
+	margin-left: 6px;
+}
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+	top: 50%;
+	margin-top: -6px;
+	}
+.leaflet-tooltip-left:before {
+	right: 0;
+	margin-right: -12px;
+	border-left-color: #fff;
+	}
+.leaflet-tooltip-right:before {
+	left: 0;
+	margin-left: -12px;
+	border-right-color: #fff;
+	}
+
+/* Printing */
+
+@media print {
+	/* Prevent printers from removing background-images of controls. */
+	.leaflet-control {
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+		}
+	}
+</style>
+<style>
+:root{
+  --acai:#2B0D35; --polpa:#6A1F7C; --palha:#D38A2B; --palmeira:#3E7A3A;
+  --bg:#F5F3F7; --surface:#FFFFFF; --ink:#22172A; --muted:#6B6072; --line:#E2DCE6;
+  --terra:#EEF1E8; --agua:#D4E3E4; --warn:#9A5B00; --bad:#A3283A;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#17101B; --surface:#21182A; --ink:#EFE9F2; --muted:#A99BB2; --line:#382C42;
+    --polpa:#C27BD6; --palha:#E7A650; --palmeira:#7DBB74; --terra:#26302A; --agua:#162428;
+    --warn:#E4A94A; --bad:#EE7A8B; --acai:#0E0612; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#17101B; --surface:#21182A; --ink:#EFE9F2; --muted:#A99BB2; --line:#382C42;
+  --polpa:#C27BD6; --palha:#E7A650; --palmeira:#7DBB74; --terra:#26302A; --agua:#162428;
+  --warn:#E4A94A; --bad:#EE7A8B; --acai:#0E0612; color-scheme: dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 "Atkinson Hyperlegible",system-ui,sans-serif}
+h1,h2,h3{font-family:"Bricolage Grotesque","Atkinson Hyperlegible",system-ui,sans-serif;margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--palha);outline-offset:2px}
+.app{display:grid;grid-template-columns:400px 1fr;height:100vh}
+aside{display:flex;flex-direction:column;min-height:0;border-right:1px solid var(--line);background:var(--surface)}
+.masthead{background:var(--acai);color:#F4EAF7;padding:22px 22px 18px;position:relative;overflow:hidden}
+.masthead h1{font-size:34px;line-height:1;letter-spacing:-.02em}
+.masthead p{margin:8px 0 0;color:#CDB9D6;font-size:14px;max-width:32ch}
+.masthead .drops{position:absolute;right:-18px;top:-10px;opacity:.9}
+.tally{display:flex;gap:18px;margin-top:14px;font-size:13px;color:#CDB9D6}
+.tally b{display:block;font:700 22px "Bricolage Grotesque",sans-serif;color:#fff}
+.controls{padding:14px 18px;border-bottom:1px solid var(--line);display:grid;gap:10px}
+.search{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.seg{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.seg button{border:0;background:none;padding:6px 12px;cursor:pointer;font-size:13px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+select{padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:var(--surface);font-size:13px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 12px;cursor:pointer;font-size:13px}
+.btn.primary{background:var(--polpa);border-color:var(--polpa);color:#fff}
+.btn.active{background:var(--palha);border-color:var(--palha);color:#231400}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.list{overflow:auto;flex:1;min-height:0}
+.item{display:grid;grid-template-columns:14px 1fr auto;gap:10px;padding:12px 18px;border-bottom:1px solid var(--line);cursor:pointer;align-items:start;background:none;border-left:0;border-right:0;border-top:0;width:100%;text-align:left}
+.item:hover,.item.sel{background:var(--bg)}
+.dot{width:12px;height:12px;border-radius:50%;margin-top:5px;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line)}
+.item h3{font-size:16px;font-weight:700}
+.item .addr{color:var(--muted);font-size:13px}
+.item .score{font:700 15px "Bricolage Grotesque",sans-serif}
+.flags{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.flag{font-size:11.5px;padding:1px 7px;border-radius:5px;border:1px solid var(--line);color:var(--muted)}
+.flag.warn{color:var(--warn);border-color:currentColor}
+.flag.ok{color:var(--palmeira);border-color:currentColor}
+.flag.bad{color:var(--bad);border-color:currentColor}
+.empty{padding:28px 18px;color:var(--muted)}
+main{position:relative;min-height:0}
+#map{position:absolute;inset:0;background:var(--agua)}
+.leaflet-container{font:inherit}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--surface);color:var(--ink)}
+.leaflet-popup-content{margin:14px 16px;min-width:230px}
+.pop h3{font-size:18px;margin-bottom:2px}
+.pop dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:8px 0;font-size:13px}
+.pop dt{color:var(--muted)}.pop dd{margin:0}
+.pop .links{display:flex;gap:10px;flex-wrap:wrap;font-size:13px;margin-top:6px}
+.pop a{color:var(--polpa)}
+.maptools{position:absolute;top:12px;right:12px;z-index:500;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.maptools .btn{box-shadow:0 1px 3px rgba(0,0,0,.18)}
+.hint{position:absolute;left:12px;bottom:28px;z-index:500;max-width:360px;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--palha);border-radius:8px;padding:10px 12px;font-size:13px}
+.hint button{margin-top:6px}
+.legend{position:absolute;right:12px;bottom:28px;z-index:500;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:12.5px;display:grid;gap:3px}
+.legend span{display:flex;align-items:center;gap:6px}
+.banner{position:absolute;left:50%;top:12px;transform:translateX(-50%);z-index:600;background:var(--ink);color:var(--surface);padding:8px 14px;border-radius:999px;font-size:13px;display:none}
+.banner.on{display:block}
+dialog{border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);padding:0;width:min(460px,94vw)}
+dialog::backdrop{background:rgba(20,8,26,.55)}
+dialog form{padding:20px;display:grid;gap:10px}
+dialog label{display:grid;gap:3px;font-size:13px;color:var(--muted)}
+dialog input,dialog select,dialog textarea{padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);border-radius:8px;font-size:14px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dlgact{display:flex;justify-content:space-between;gap:8px;margin-top:6px}
+.stats{padding:12px 18px;border-bottom:1px solid var(--line);font-size:13px;display:none}
+.stats.on{display:block}
+.bar{display:grid;grid-template-columns:110px 1fr 24px;gap:8px;align-items:center;margin:3px 0}
+.bar i{display:block;height:8px;border-radius:4px;background:var(--polpa)}
+.street-tip{font-size:12px;padding:2px 6px}
+.ruas-res{padding:8px 18px;border-bottom:1px solid var(--line);font-size:13px}
+.ruas-res button{border:0;background:none;color:var(--polpa);cursor:pointer;padding:2px 0;text-decoration:underline;margin-right:10px}
+.help ol{padding-left:20px;margin:6px 0}
+.help pre{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;overflow-x:auto;font-size:12px;white-space:pre}
+.editor{color:var(--muted);font-size:12px}
+.masthead h1{white-space:pre-line}
+.tally{flex-wrap:wrap}
+.seg{flex-wrap:wrap}
+.cat-row{display:grid;grid-template-columns:34px 1fr auto;gap:8px;align-items:center}
+.cat-row input[type=color]{width:34px;height:34px;padding:2px;border-radius:8px}
+.cat-row .uso{font-size:12px;color:var(--muted);grid-column:2/4}
+.move{grid-column:1/4;display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px;background:var(--bg);padding:8px;border-radius:8px}
+.tagchip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:13px;cursor:pointer}
+.tagchip input{accent-color:var(--polpa)}
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:8px 14px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .2s;z-index:9999;pointer-events:none}
+.toast.on{opacity:1}
+@media (max-width:820px){
+  .app{grid-template-columns:1fr;grid-template-rows:auto 55vh auto;height:auto}
+  aside{display:contents}
+  .masthead{order:1}.controls{order:2;background:var(--surface)}main{order:3;height:55vh}
+  .stats{order:4;background:var(--surface)} .list{order:5;overflow:visible;background:var(--surface)}
+  .hint{max-width:calc(100% - 24px);bottom:auto;top:56px}
+  .legend{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside>
+  <header class="masthead">
+    <svg class="drops" width="120" height="120" viewBox="0 0 120 120" aria-hidden="true">
+      <g fill="#6A1F7C"><circle cx="30" cy="40" r="14"/><circle cx="60" cy="28" r="11"/><circle cx="88" cy="46" r="15"/><circle cx="52" cy="62" r="13"/><circle cx="82" cy="80" r="10"/><circle cx="28" cy="78" r="9"/></g>
+      <g fill="#F4EAF7" opacity=".35"><circle cx="26" cy="36" r="3"/><circle cx="57" cy="25" r="2.5"/><circle cx="84" cy="41" r="3.2"/><circle cx="48" cy="58" r="3"/></g>
+      <path d="M60 28 Q70 5 100 2" stroke="#3E7A3A" stroke-width="3" fill="none"/>
+    </svg>
+    <h1 id="titulo">Mapa do Açaí
+Bragança-PA</h1>
+    <p id="subtitulo">Batedores e açaiterias de Bragança, num só lugar.</p>
+    <div class="tally" id="tally"><div><b id="tTotal">–</b>pontos</div></div>
+  </header>
+  <div class="controls">
+    <input id="q" class="search" type="search" placeholder="Buscar por nome, rua ou bairro" aria-label="Buscar">
+    <div class="row">
+      <div class="seg" role="group" aria-label="Categoria" id="segCat"></div>
+      <select id="bairro" aria-label="Bairro"><option value="">Todos os bairros</option></select>
+      <select id="tag" aria-label="Etiqueta"><option value="">Etiquetas: todas</option></select>
+      <select id="licenca" aria-label="Licença">
+        <option value="">Licença: todas</option>
+        <option value="licenciado">Licença em dia</option>
+        <option value="vencida">Licença vencida</option>
+        <option value="em_processo">Em processo</option>
+        <option value="sem_licenca">Sem licença</option>
+        <option value="nao_verificado">Não verificada</option>
+      </select>
+      <select id="zona" aria-label="Zona"><option value="">Urbana e rural</option><option value="urbana">Zona urbana</option><option value="rural">Zona rural</option></select>
+    </div>
+    <div class="actions">
+      <button class="btn primary" id="btnAdd" disabled>Adicionar ponto</button>
+      <button class="btn" id="btnEdit" disabled>Ajustar posições</button>
+      <button class="btn" id="btnStats">Resumo</button>
+      <button class="btn" id="btnConfig" hidden>Título e categorias</button>
+      <button class="btn" id="btnRuas" hidden>Importar camada</button><input type="file" id="fileRuas" accept=".geojson,.json,application/geo+json,application/json" hidden>
+      <button class="btn" id="btnPdf" hidden>Baixar PDF</button>
+      <button class="btn" id="btnXls" hidden>Baixar Excel</button>
+      <button class="btn" id="btnLogin">Entrar</button>
+    </div>
+  </div>
+  <dialog id="dlgLogin" style="border:none;border-radius:14px;padding:0;max-width:340px;width:92vw">
+    <form id="formLogin" style="padding:18px;display:flex;flex-direction:column;gap:10px">
+      <h3 style="margin:0 0 4px">Entrar como responsável</h3>
+      <p style="margin:0 0 4px;color:var(--muted);font-size:13px">Apenas para quem administra o mapa (excluir pontos, mudar título/categorias, importar camadas). Visitantes não precisam disso para cadastrar ou editar pontos.</p>
+      <input name="email" type="email" placeholder="E-mail" required style="padding:9px 10px;border-radius:8px;border:1px solid var(--line)">
+      <input name="senha" type="password" placeholder="Senha" required style="padding:9px 10px;border-radius:8px;border:1px solid var(--line)">
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:6px">
+        <button type="button" class="btn" id="btnLoginCancel">Cancelar</button>
+        <button type="submit" class="btn primary">Entrar</button>
+      </div>
+    </form>
+  </dialog>
+  <section class="stats" id="stats" aria-label="Resumo"></section>
+  <div class="ruas-res" id="ruasRes" hidden></div>
+  <div class="list" id="list" aria-live="polite"><div class="empty">Carregando pontos…</div></div>
+</aside>
+<main>
+  <div id="map" role="region" aria-label="Mapa"></div>
+  <div class="banner" id="banner"></div>
+  <div class="maptools">
+    <button class="btn" id="btnUrb">Zona urbana</button>
+    <button class="btn" id="btnMun">Município inteiro</button>
+    <button class="btn" id="tg-ruas" hidden aria-pressed="true">Ruas urbanas</button>
+    <button class="btn" id="tg-rural" hidden aria-pressed="true">Zona rural</button>
+  </div>
+  <div class="hint" id="hint">
+    <strong>Posições ainda aproximadas.</strong> Os pontos com borda âmbar foram estimados pelo endereço. <span id="hintRuas">Assim que as ruas forem importadas, use <em>Ajustar posições</em> e arraste cada marcador para a esquina certa.</span>
+    <div><button class="btn" id="hintClose">Entendi</button></div>
+  </div>
+  <div class="legend" aria-label="Legenda">
+    <div id="legCats" style="display:grid;gap:3px"></div>
+    <span><i class="dot" style="background:transparent;box-shadow:0 0 0 2px var(--warn)"></i>Posição aproximada</span>
+    <span><i class="dot" style="background:var(--palmeira);width:9px;height:9px"></i>Vila ou localidade rural</span>
+    <span><i style="display:inline-block;width:14px;border-top:2px dashed var(--palmeira)"></i>Ramal / estrada de terra</span>
+  </div>
+</main>
+</div>
+
+<dialog id="dlg">
+  <form method="dialog" id="frm" novalidate>
+    <h2 id="dlgTitle">Novo ponto</h2>
+    <label>Nome<input name="nome" required maxlength="80"></label>
+    <label>Endereço<input name="endereco" maxlength="140"></label>
+    <div class="two">
+      <label>Bairro ou comunidade<input name="bairro" list="bairrosList" maxlength="60"></label>
+      <label>Categoria<select name="categoria" id="selCat"></select></label>
+    </div>
+    <label>Zona<select name="zona"><option value="urbana">Urbana</option><option value="rural">Rural</option></select></label>
+    <fieldset id="fsTags" style="border:1px solid var(--line);border-radius:10px;padding:10px;margin:0">
+      <legend style="padding:0 4px;font-size:13px;color:var(--muted)">Etiquetas</legend>
+      <div id="tagsBox" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+    </fieldset>
+    <label>Funcionamento<input name="horario" maxlength="120" placeholder="Ex.: Seg a Sáb, 07h às 13h"></label>
+    <label>Destaque<textarea name="destaque" rows="2" maxlength="200"></textarea></label>
+    <label>Nota (0 a 5)<input name="nota" type="number" min="0" max="5" step="any"></label>
+    <fieldset style="border:1px solid var(--line);border-radius:10px;padding:10px;display:grid;gap:10px;margin:0">
+      <legend style="padding:0 4px;font-size:13px;color:var(--muted)">Licença</legend>
+      <label>Situação<select name="licenca"><option value="nao_verificado">Não verificada</option><option value="licenciado">Licenciado</option><option value="em_processo">Em processo</option><option value="sem_licenca">Sem licença</option></select></label>
+      <div class="two">
+        <label>Número<input name="licencaNumero" maxlength="60"></label>
+        <label>Validade<input name="licencaValidade" type="date"></label>
+      </div>
+    </fieldset>
+    <div class="two">
+      <label>Latitude<input name="lat" type="number" step="any" required></label>
+      <label>Longitude<input name="lng" type="number" step="any" required></label>
+    </div>
+    <label>Posição<select name="coordStatus"><option value="aproximada">Aproximada</option><option value="conferida">Conferida no local</option></select></label>
+    <div class="dlgact">
+      <button type="button" class="btn" id="btnDel" style="color:var(--bad)">Excluir ponto</button>
+      <span style="display:flex;gap:8px"><button type="button" class="btn" id="btnCancel">Cancelar</button><button class="btn primary" id="btnSave">Salvar ponto</button></span>
+    </div>
+  </form>
+</dialog>
+<dialog id="dlgImp"><form method="dialog" class="help">
+  <h2>Qual camada você vai importar?</h2>
+  <p>O arquivo substitui a versão atual dessa camada para todos.</p>
+  <div class="actions"><button type="button" class="btn primary" data-imp="ruas">Ruas urbanas</button><button type="button" class="btn primary" data-imp="rural">Zona rural</button><button class="btn">Cancelar</button></div>
+</form></dialog>
+<dialog id="dlgCfg"><form method="dialog" id="frmCfg" novalidate>
+  <h2>Título e categorias</h2>
+  <label>Título (use Enter para quebrar a linha)<textarea name="titulo" rows="2" maxlength="80" required></textarea></label>
+  <label>Subtítulo<input name="subtitulo" maxlength="120"></label>
+  <h3 style="font-size:16px;margin-top:6px">Categorias</h3>
+  <div id="cfgCats" style="display:grid;gap:10px"></div>
+  <div class="cat-row">
+    <input type="color" id="novaCor" value="#3E7A3A" aria-label="Cor da nova categoria">
+    <input id="novaNome" maxlength="40" placeholder="Nome da nova categoria" style="padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)">
+    <button type="button" class="btn" id="btnAddCat">Adicionar categoria</button>
+  </div>
+  <h3 style="font-size:16px;margin-top:6px">Etiquetas</h3>
+  <div id="cfgTags" style="display:grid;gap:10px"></div>
+  <div class="cat-row">
+    <input type="color" id="novaTagCor" value="#6A1F7C" aria-label="Cor da nova etiqueta">
+    <input id="novaTagNome" maxlength="40" placeholder="Nome da nova etiqueta" style="padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)">
+    <button type="button" class="btn" id="btnAddTag">Adicionar etiqueta</button>
+  </div>
+  <div class="dlgact"><span></span><span style="display:flex;gap:8px"><button type="button" class="btn" id="btnCfgCancel">Cancelar</button><button class="btn primary" id="btnCfgSave">Salvar alterações</button></span></div>
+</form></dialog>
+<datalist id="bairrosList"></datalist>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<script>
+const LIMITE = {"type":"Feature","properties":{"nome":"Bragan\u00e7a"},"geometry":{"type":"Polygon","coordinates":[[[-46.60131,-0.85427],[-46.6013,-0.85937],[-46.60816,-0.85888],[-46.60646,-0.85328],[-46.60131,-0.85427]],[[-46.60093,-0.82619],[-46.60092,-0.83129],[-46.60777,-0.83079],[-46.60607,-0.8252],[-46.60093,-0.82619]],[[-46.63769,-0.78792],[-46.64314,-0.79796],[-46.64605,-0.79508],[-46.64806,-0.79761],[-46.63956,-0.81091],[-46.62461,-0.81242],[-46.61514,-0.8258],[-46.61861,-0.82865],[-46.61105,-0.83376],[-46.61014,-0.84934],[-46.6177,-0.85396],[-46.62214,-0.8473],[-46.62909,-0.84715],[-46.62342,-0.8607],[-46.62745,-0.86234],[-46.6259,-0.87175],[-46.633,-0.87608],[-46.64058,-0.86819],[-46.64479,-0.86848],[-46.63153,-0.88753],[-46.65192,-0.89327],[-46.64656,-0.90449],[-46.64272,-0.90414],[-46.63231,-0.91292],[-46.63428,-0.92824],[-46.6427,-0.93961],[-46.65194,-0.94431],[-46.66237,-0.94059],[-46.66617,-0.94491],[-46.66187,-0.94713],[-46.66425,-0.94948],[-46.67814,-0.95526],[-46.68331,-0.95189],[-46.68738,-0.96174],[-46.67492,-0.97588],[-46.67081,-0.97292],[-46.67361,-0.9697],[-46.65645,-0.96585],[-46.64717,-0.95819],[-46.65537,-0.97006],[-46.64142,-0.96709],[-46.63745,-0.96504],[-46.63919,-0.98633],[-46.64883,-1.0012],[-46.64567,-1.01095],[-46.65927,-1.02586],[-46.66143,-1.03158],[-46.65766,-1.03326],[-46.65402,-1.06647],[-46.65333,-1.07785],[-46.65265,-1.08919],[-46.65139,-1.10982],[-46.62602,-1.14965],[-46.61533,-1.18514],[-46.62037,-1.20249],[-46.6266,-1.21084],[-46.62758,-1.22145],[-46.63451,-1.22572],[-46.63419,-1.22684],[-46.60125,-1.26824],[-46.57279,-1.304],[-46.54805,-1.33507],[-46.60728,-1.37971],[-46.69017,-1.44219],[-46.82374,-1.54294],[-46.81789,-1.54727],[-46.83075,-1.54652],[-46.85826,-1.56741],[-46.8739,-1.57929],[-46.87479,-1.57996],[-46.87785,-1.56035],[-46.87316,-1.556],[-46.86099,-1.5277],[-46.8612,-1.52191],[-46.85679,-1.51777],[-46.86063,-1.51035],[-46.84459,-1.46844],[-46.84936,-1.46418],[-46.8506,-1.4552],[-46.86035,-1.44163],[-46.89836,-1.42882],[-46.90698,-1.42737],[-46.91476,-1.41378],[-46.92011,-1.37997],[-46.92397,-1.35892],[-46.92922,-1.35077],[-46.92946,-1.33156],[-46.93753,-1.31146],[-46.93967,-1.29644],[-46.94244,-1.2941],[-46.95645,-1.3033],[-46.97856,-1.31146],[-46.98475,-1.30668],[-46.99037,-1.3111],[-46.99693,-1.30811],[-47.00165,-1.29323],[-47.00335,-1.26898],[-47.00067,-1.25491],[-47.02581,-1.20523],[-47.00805,-1.20902],[-46.98337,-1.21429],[-46.9641,-1.24778],[-46.95887,-1.25686],[-46.92626,-1.20343],[-46.88776,-1.14035],[-46.88571,-1.13699],[-46.85745,-1.08825],[-46.86349,-1.07559],[-46.85252,-1.06623],[-46.84815,-1.04369],[-46.84686,-1.03679],[-46.84257,-1.01495],[-46.83922,-0.99766],[-46.84249,-0.98993],[-46.84072,-0.98139],[-46.84463,-0.95823],[-46.8443,-0.95762],[-46.83768,-0.94758],[-46.83505,-0.93431],[-46.82141,-0.9322],[-46.81688,-0.9315],[-46.8126,-0.92575],[-46.8061,-0.9273],[-46.80625,-0.91347],[-46.81402,-0.90615],[-46.8159,-0.88989],[-46.8041,-0.8785],[-46.80135,-0.86189],[-46.78664,-0.88067],[-46.79708,-0.8878],[-46.79381,-0.89757],[-46.78848,-0.90002],[-46.79106,-0.88879],[-46.782,-0.88562],[-46.78187,-0.88244],[-46.785,-0.87183],[-46.78856,-0.87007],[-46.78884,-0.86495],[-46.78478,-0.86398],[-46.79112,-0.8606],[-46.79395,-0.84471],[-46.78317,-0.83366],[-46.77275,-0.83755],[-46.76539,-0.85113],[-46.76348,-0.84842],[-46.76845,-0.83028],[-46.76595,-0.81713],[-46.75725,-0.82464],[-46.74662,-0.82825],[-46.73992,-0.86251],[-46.74169,-0.8656],[-46.73303,-0.89397],[-46.73276,-0.90164],[-46.74526,-0.9133],[-46.74589,-0.92005],[-46.74228,-0.92061],[-46.73989,-0.91428],[-46.72664,-0.90429],[-46.72147,-0.89572],[-46.72128,-0.88419],[-46.72847,-0.86335],[-46.72119,-0.82673],[-46.70325,-0.82129],[-46.69756,-0.82751],[-46.68925,-0.8482],[-46.67706,-0.85513],[-46.68084,-0.86013],[-46.67364,-0.86127],[-46.673,-0.85109],[-46.66786,-0.85224],[-46.66578,-0.85659],[-46.66406,-0.84934],[-46.66769,-0.84537],[-46.67842,-0.84352],[-46.6875,-0.81718],[-46.6853,-0.80648],[-46.678,-0.8055],[-46.6703,-0.81419],[-46.66276,-0.81423],[-46.66106,-0.81067],[-46.67189,-0.79711],[-46.6618,-0.78952],[-46.66381,-0.78659],[-46.65169,-0.78261],[-46.63769,-0.78792]]]}};
+const COL = "pontos";
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+let usr = null, canAdmin = false, meuId = null;
+let db = null, canWrite = false, pts = [], markers = {}, selId = null, cat = "todos", editMode = false, addMode = false, editingId = null;
+
+const LIC={licenciado:["Licença em dia","ok"],vencida:["Licença vencida","bad"],em_processo:["Licença em processo","warn"],sem_licenca:["Sem licença","bad"],nao_verificado:["Licença não verificada",""]};
+function hojeISO(){const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)}
+function statusLic(p){const s=p.licenca||"nao_verificado"; if(s==="licenciado"&&p.licencaValidade&&p.licencaValidade<hojeISO()) return "vencida"; return LIC[s]?s:"nao_verificado"}
+function dataBR(iso){return iso?iso.split("-").reverse().join("/"):""}
+const CFG_PADRAO={titulo:"Mapa do Açaí\nBragança-PA",subtitulo:"Batedores e açaiterias de Bragança, num só lugar.",
+  categorias:[{id:"tradicional",nome:"Batedor tradicional",cor:"#6A1F7C"},{id:"gourmet",nome:"Açaiteria gourmet",cor:"#D38A2B"}],
+  tags:[]};
+let cfg=CFG_PADRAO;
+const SEM_CAT={id:"",nome:"Sem categoria",cor:"#8A8290"};
+const catDe=p=>cfg.categorias.find(c=>c.id===p.categoria)||SEM_CAT;
+const tagsDe=p=>(Array.isArray(p.tags)?p.tags:[]).map(id=>cfg.tags.find(t=>t.id===id)).filter(Boolean);
+function slug(s){return (s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||"cat").slice(0,40)}
+function aplicarCfg(){
+  $("#titulo").textContent=cfg.titulo; $("#subtitulo").textContent=cfg.subtitulo||""; $("#subtitulo").hidden=!cfg.subtitulo;
+  document.title=cfg.titulo.replace(/\s*\n\s*/g," · ");
+  if(cat!=="todos"&&!cfg.categorias.some(c=>c.id===cat)) cat="todos";
+  $("#segCat").innerHTML=[{id:"todos",nome:"Todas"},...cfg.categorias].map(c=>`<button data-cat="${esc(c.id)}" aria-pressed="${c.id===cat}">${esc(c.nome)}</button>`).join("");
+  $("#segCat").querySelectorAll("button").forEach(b=>b.onclick=()=>{cat=b.dataset.cat;$("#segCat").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));render()});
+  $("#legCats").innerHTML=cfg.categorias.map(c=>`<span><i class="dot" style="background:${esc(c.cor)}"></i>${esc(c.nome)}</span>`).join("");
+  $("#selCat").innerHTML=cfg.categorias.map(c=>`<option value="${esc(c.id)}">${esc(c.nome)}</option>`).join("");
+  const tsel=$("#tag").value; $("#tag").innerHTML=`<option value="">Etiquetas: todas</option>`+cfg.tags.map(t=>`<option value="${esc(t.id)}" ${t.id===tsel?"selected":""}>${esc(t.nome)}</option>`).join("");
+  $("#tag").hidden=!cfg.tags.length;
+  render();
+}
+// edição das configurações
+let rascunho=null;
+function abrirCfg(){
+  rascunho={titulo:cfg.titulo,subtitulo:cfg.subtitulo||"",categorias:cfg.categorias.map(c=>({...c})),tags:cfg.tags.map(x=>({...x})),mover:{}};
+  const f=$("#frmCfg"); f.elements.titulo.value=rascunho.titulo; f.elements.subtitulo.value=rascunho.subtitulo;
+  $("#novaNome").value=""; $("#novaTagNome").value=""; desenharCfgCats(); desenharCfgTags(); $("#dlgCfg").showModal();
+}
+function desenharCfgCats(){
+  const box=$("#cfgCats"), cats=rascunho.categorias;
+  box.innerHTML=cats.map((c,i)=>{const uso=pts.filter(p=>p.categoria===c.id).length;
+    const outras=cats.filter(o=>o.id!==c.id&&!o.removida);
+    if(c.removida) return `<div class="cat-row"><span></span><s style="color:var(--muted)">${esc(c.nome)}</s><button type="button" class="btn" data-undo="${i}">Desfazer</button>
+      ${uso?`<div class="move">Mover os ${uso} ponto(s) para <select data-mv="${i}">${outras.map(o=>`<option value="${esc(o.id)}" ${rascunho.mover[c.id]===o.id?"selected":""}>${esc(o.nome)}</option>`).join("")}</select></div>`:""}</div>`;
+    return `<div class="cat-row"><input type="color" value="${esc(c.cor)}" data-cor="${i}" aria-label="Cor de ${esc(c.nome)}">
+      <input value="${esc(c.nome)}" data-nome="${i}" maxlength="40" aria-label="Nome da categoria" style="padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)">
+      <button type="button" class="btn" data-rm="${i}" style="color:var(--bad)" ${cats.filter(o=>!o.removida).length<=1?"disabled title='Mantenha ao menos uma categoria'":""}>Excluir</button>
+      <span class="uso">${uso} ponto(s)</span></div>`}).join("");
+  box.querySelectorAll("[data-cor]").forEach(el=>el.oninput=()=>cats[el.dataset.cor].cor=el.value);
+  box.querySelectorAll("[data-nome]").forEach(el=>el.oninput=()=>cats[el.dataset.nome].nome=el.value);
+  box.querySelectorAll("[data-rm]").forEach(el=>el.onclick=()=>{const c=cats[el.dataset.rm];c.removida=true;
+    const alvo=cats.find(o=>o.id!==c.id&&!o.removida); if(alvo) rascunho.mover[c.id]=alvo.id; desenharCfgCats()});
+  box.querySelectorAll("[data-undo]").forEach(el=>el.onclick=()=>{const c=cats[el.dataset.undo];delete c.removida;delete rascunho.mover[c.id];desenharCfgCats()});
+  box.querySelectorAll("[data-mv]").forEach(el=>el.onchange=()=>rascunho.mover[cats[el.dataset.mv].id]=el.value);
+}
+function desenharCfgTags(){
+  const box=$("#cfgTags"), tgs=rascunho.tags;
+  box.innerHTML=tgs.length?tgs.map((c,i)=>{const uso=pts.filter(p=>(p.tags||[]).includes(c.id)).length;
+    if(c.removida) return `<div class="cat-row"><span></span><s style="color:var(--muted)">${esc(c.nome)}</s><button type="button" class="btn" data-tundo="${i}">Desfazer</button>
+      ${uso?`<div class="move">Será retirada de ${uso} ponto(s).</div>`:""}</div>`;
+    return `<div class="cat-row"><input type="color" value="${esc(c.cor)}" data-tcor="${i}" aria-label="Cor de ${esc(c.nome)}">
+      <input value="${esc(c.nome)}" data-tnome="${i}" maxlength="40" aria-label="Nome da etiqueta" style="padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)">
+      <button type="button" class="btn" data-trm="${i}" style="color:var(--bad)">Excluir</button><span class="uso">${uso} ponto(s)</span></div>`}).join("")
+    : `<p class="editor" style="margin:0">Nenhuma etiqueta ainda. Crie abaixo, por exemplo: delivery, aberto 24h, açaí puro.</p>`;
+  box.querySelectorAll("[data-tcor]").forEach(el=>el.oninput=()=>tgs[el.dataset.tcor].cor=el.value);
+  box.querySelectorAll("[data-tnome]").forEach(el=>el.oninput=()=>tgs[el.dataset.tnome].nome=el.value);
+  box.querySelectorAll("[data-trm]").forEach(el=>el.onclick=()=>{tgs[el.dataset.trm].removida=true;desenharCfgTags()});
+  box.querySelectorAll("[data-tundo]").forEach(el=>el.onclick=()=>{delete tgs[el.dataset.tundo].removida;desenharCfgTags()});
+}
+$("#btnAddTag").onclick=()=>{
+  const nome=$("#novaTagNome").value.trim(); if(!nome){toast("Digite o nome da nova etiqueta");$("#novaTagNome").focus();return}
+  if(rascunho.tags.some(c=>!c.removida&&c.nome.trim().toLowerCase()===nome.toLowerCase())){toast("Já existe uma etiqueta com esse nome");return}
+  let id=slug(nome),n=2; while(rascunho.tags.some(c=>c.id===id)) id=slug(nome)+"-"+(n++);
+  rascunho.tags.push({id,nome,cor:$("#novaTagCor").value}); $("#novaTagNome").value=""; desenharCfgTags();
+};
+$("#novaTagNome").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("#btnAddTag").click()}});
+$("#btnConfig").onclick=abrirCfg;
+$("#btnCfgCancel").onclick=()=>$("#dlgCfg").close();
+$("#btnAddCat").onclick=()=>{
+  const nome=$("#novaNome").value.trim(); if(!nome){toast("Digite o nome da nova categoria");$("#novaNome").focus();return}
+  if(rascunho.categorias.some(c=>!c.removida&&c.nome.trim().toLowerCase()===nome.toLowerCase())){toast("Já existe uma categoria com esse nome");return}
+  let id=slug(nome),n=2; while(rascunho.categorias.some(c=>c.id===id)) id=slug(nome)+"-"+(n++);
+  rascunho.categorias.push({id,nome,cor:$("#novaCor").value}); $("#novaNome").value=""; desenharCfgCats();
+};
+$("#novaNome").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("#btnAddCat").click()}});
+$("#frmCfg").addEventListener("submit",async ev=>{
+  ev.preventDefault(); const f=ev.target;
+  const titulo=f.elements.titulo.value.trim(); if(!titulo){toast("O título não pode ficar vazio");return}
+  const ficam=rascunho.categorias.filter(c=>!c.removida).map(({id,nome,cor})=>({id,nome:nome.trim(),cor}));
+  if(!ficam.length){toast("Mantenha ao menos uma categoria");return}
+  if(ficam.some(c=>!c.nome)){toast("Toda categoria precisa de um nome");return}
+  const tagsFicam=rascunho.tags.filter(c=>!c.removida).map(({id,nome,cor})=>({id,nome:nome.trim(),cor}));
+  if(tagsFicam.some(c=>!c.nome)){toast("Toda etiqueta precisa de um nome");return}
+  const tagsFora=rascunho.tags.filter(c=>c.removida).map(c=>c.id);
+  $("#btnCfgSave").disabled=true;
+  try{
+    for(const c of rascunho.categorias.filter(c=>c.removida)){
+      const alvo=rascunho.mover[c.id]; for(const p of pts.filter(p=>p.categoria===c.id)){
+        banner(`Movendo pontos de “${c.nome}”…`); await db.doc(`${COL}/${p.id}`).update({categoria:alvo,atualizadoEm:new Date().toISOString(),...autor()}); }
+    }
+    for(const p of (tagsFora.length?pts.filter(p=>(p.tags||[]).some(id=>tagsFora.includes(id))):[])){
+      banner("Retirando etiquetas excluídas…");
+      await db.doc(`${COL}/${p.id}`).update({tags:(p.tags||[]).filter(id=>!tagsFora.includes(id)),atualizadoEm:new Date().toISOString(),...autor()}); }
+    await db.doc("config/geral").set({titulo,subtitulo:f.elements.subtitulo.value.trim(),categorias:ficam,tags:tagsFicam,atualizadoEm:new Date().toISOString(),...autor()});
+    banner(""); $("#dlgCfg").close(); toast("Alterações salvas");
+  }catch(e){banner("");toast(e.code==="invalid_argument"?"Você não tem permissão para alterar título, categorias e etiquetas":"Não foi possível salvar: "+(e.message||e.code))}
+  finally{$("#btnCfgSave").disabled=false}
+});
+function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("on"),2600)}
+
+// ---- mapa
+const map = L.map("map",{preferCanvas:true,zoomControl:true,attributionControl:true,minZoom:9,maxZoom:19});
+map.attributionControl.setPrefix(false).addAttribution("Ruas: © colaboradores do OpenStreetMap (ODbL) · Limite municipal: IBGE");
+L.control.scale({imperial:false}).addTo(map);
+const limite = L.geoJSON(LIMITE,{style:()=>({color:css("--muted"),weight:1.5,dashArray:"4 4",fillColor:css("--terra"),fillOpacity:1})}).addTo(map);
+map.fitBounds(limite.getBounds());
+const grid = L.layerGroup().addTo(map);
+function drawGrid(){ // grade de referência a cada 0,005° na zona urbana
+  grid.clearLayers(); if(map.getZoom()<14 || (typeof estado!=="undefined" && estado.ruas.layer)) return;
+  const b=map.getBounds(), st=map.getZoom()>=16?0.001:0.005, c=css("--line");
+  for(let x=Math.floor(b.getWest()/st)*st;x<=b.getEast();x+=st) L.polyline([[b.getSouth(),x],[b.getNorth(),x]],{color:c,weight:1,interactive:false}).addTo(grid);
+  for(let y=Math.floor(b.getSouth()/st)*st;y<=b.getNorth();y+=st) L.polyline([[y,b.getWest()],[y,b.getEast()]],{color:c,weight:1,interactive:false}).addTo(grid);
+}
+map.on("moveend",drawGrid);
+const layer = L.layerGroup().addTo(map);
+
+function urbanView(){
+  const v = pts.filter(p=>isFinite(p.lat)&&isFinite(p.lng));
+  if(v.length) map.fitBounds(L.latLngBounds(v.map(p=>[p.lat,p.lng])).pad(0.35),{maxZoom:16});
+  else map.setView([-1.0536,-46.7656],15);
+}
+$("#btnUrb").onclick=urbanView;
+$("#btnMun").onclick=()=>map.fitBounds(limite.getBounds());
+$("#hintClose").onclick=()=>{$("#hint").hidden=true;try{localStorage.setItem("hintOff","1")}catch(e){}};
+try{ if(localStorage.getItem("hintOff")) $("#hint").hidden=true }catch(e){}
+
+// ---- filtros
+function filtered(){
+  const q=$("#q").value.trim().toLowerCase(), b=$("#bairro").value, z=$("#zona").value, lc=$("#licenca").value, tg=$("#tag").value;
+  return pts.filter(p=>(cat==="todos"||p.categoria===cat)&&(!b||p.bairro===b)&&(!z||(p.zona||"urbana")===z)&&(!lc||statusLic(p)===lc)&&(!tg||(p.tags||[]).includes(tg))
+    &&(!q||[p.nome,p.endereco,p.bairro].join(" ").toLowerCase().includes(q)))
+    .sort((a,b)=>(b.nota??-1)-(a.nota??-1)||a.nome.localeCompare(b.nome,"pt"));
+}
+["#q","#bairro","#zona","#licenca","#tag"].forEach(s=>$(s).addEventListener("input",()=>{render();renderRuasBusca()}));
+
+function popupHtml(p){
+  const osm=`https://www.openstreetmap.org/?mlat=${p.lat}&mlon=${p.lng}#map=18/${p.lat}/${p.lng}`;
+  const gm=`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.nome+", "+(p.endereco||"")+", Bragança - PA")}`;
+  return `<div class="pop"><h3>${esc(p.nome)}</h3>
+  <div style="color:var(--muted);font-size:13px">${esc(catDe(p).nome)}${p.nota!=null?" · nota "+Number(p.nota).toFixed(1):""}</div>
+  <dl><dt>Endereço</dt><dd>${esc(p.endereco||"—")}${p.bairro?", "+esc(p.bairro):""}</dd>
+  <dt>Horário</dt><dd>${esc(p.horario||"Não informado")}</dd>
+  ${p.destaque?`<dt>Destaque</dt><dd>${esc(p.destaque)}</dd>`:""}
+  ${tagsDe(p).length?`<dt>Etiquetas</dt><dd>${tagsDe(p).map(t=>esc(t.nome)).join(", ")}</dd>`:""}
+  <dt>Licença</dt><dd>${LIC[statusLic(p)][0]}${p.licencaNumero?` · nº ${esc(p.licencaNumero)}`:""}${p.licencaValidade?` · validade ${dataBR(p.licencaValidade)}`:""}</dd>
+  <dt>Posição</dt><dd>${p.coordStatus==="conferida"?"Conferida":"Aproximada"} (${Number(p.lat).toFixed(5)}, ${Number(p.lng).toFixed(5)})</dd></dl>
+  ${p.atualizadoEm?`<div class="editor">Atualizado em ${new Date(p.atualizadoEm).toLocaleDateString("pt-BR")}${p.editadoPor?` por <span data-uid="${esc(p.editadoPor)}">…</span>`:""}</div>`:""}
+  <div class="links"><a href="${osm}" target="_blank" rel="noopener">Conferir no OpenStreetMap</a><a href="${gm}" target="_blank" rel="noopener">Buscar no Google Maps</a>
+  </div>${canWrite?`<div class="actions" style="margin-top:10px"><button class="btn primary" data-edit="${esc(p.id)}">Editar ponto</button>${canAdmin?`<button class="btn" data-del="${esc(p.id)}" style="color:var(--bad)">Excluir ponto</button>`:""}</div>`:""}</div>`;
+}
+map.on("popupopen",async e=>{const el=e.popup.getElement();const u=el.querySelector("[data-uid]");if(u)u.textContent=u.dataset.uid.startsWith("responsavel:")?"o responsável pelo mapa":"um colaborador";const a=el.querySelector("[data-edit]");if(a)a.onclick=ev=>{ev.preventDefault();openForm(a.dataset.edit)};const x=el.querySelector("[data-del]");if(x)x.onclick=ev=>{ev.preventDefault();openForm(x.dataset.del);armarExclusao()}});
+
+function render(){
+  const f=filtered(), ids=new Set(f.map(p=>p.id));
+  $("#tally").innerHTML=`<div><b>${pts.length}</b>pontos</div>`+cfg.categorias.map(c=>`<div><b>${pts.filter(p=>p.categoria===c.id).length}</b>${esc(c.nome)}</div>`).join("");
+  // bairros
+  const bs=[...new Set(pts.map(p=>p.bairro).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"pt")), cur=$("#bairro").value;
+  $("#bairro").innerHTML=`<option value="">Todos os bairros</option>`+bs.map(b=>`<option ${b===cur?"selected":""}>${esc(b)}</option>`).join("");
+  $("#bairrosList").innerHTML=bs.map(b=>`<option value="${esc(b)}">`).join("");
+  // marcadores
+  layer.clearLayers(); markers={};
+  for(const p of f){ if(!isFinite(p.lat)||!isFinite(p.lng)) continue;
+    const color=catDe(p).cor, approx=p.coordStatus!=="conferida";
+    const icon=L.divIcon({className:"",iconSize:[22,22],iconAnchor:[11,11],
+      html:`<div style="width:22px;height:22px;border-radius:50%;background:${color};border:3px solid ${approx?css("--warn"):"#fff"};${approx?"border-style:dashed;":""}box-shadow:0 1px 4px rgba(0,0,0,.35);${p.id===selId?"transform:scale(1.35)":""}"></div>`});
+    const m=L.marker([p.lat,p.lng],{icon,draggable:editMode,title:p.nome,keyboard:true}).addTo(layer).bindPopup(popupHtml(p));
+    m.on("click",()=>{selId=p.id;highlight()});
+    m.on("dragend",()=>savePos(p.id,m.getLatLng()));
+    markers[p.id]=m;
+  }
+  // lista
+  $("#list").innerHTML = f.length ? f.map(p=>`
+    <button class="item ${p.id===selId?"sel":""}" data-id="${esc(p.id)}">
+      <i class="dot" style="background:${esc(catDe(p).cor)}"></i>
+      <div><h3>${esc(p.nome)}</h3><div class="addr">${esc(p.endereco||"")}${p.bairro?" — "+esc(p.bairro):""}</div>
+      <div class="addr">${esc(p.horario||"Horário não informado")}</div>
+      <div class="flags">${p.zona==="rural"?'<span class="flag">Zona rural</span>':""}${p.coordStatus!=="conferida"?'<span class="flag warn">Posição aproximada</span>':'<span class="flag ok">Posição conferida</span>'}<span class="flag ${LIC[statusLic(p)][1]}">${LIC[statusLic(p)][0]}</span>${tagsDe(p).map(t=>`<span class="flag" style="border-color:${esc(t.cor)};color:var(--ink)">${esc(t.nome)}</span>`).join("")}</div></div>
+      <div class="score">${p.nota!=null?Number(p.nota).toFixed(1):""}</div>
+    </button>`).join("")
+    : `<div class="empty">${pts.length?"Nenhum ponto com esses filtros. Limpe a busca ou escolha outro bairro.":"Nenhum ponto cadastrado ainda."}</div>`;
+  document.querySelectorAll(".item").forEach(el=>el.onclick=()=>focusPt(el.dataset.id));
+  renderStats();
+}
+function highlight(){document.querySelectorAll(".item").forEach(el=>el.classList.toggle("sel",el.dataset.id===selId))}
+function focusPt(id){const m=markers[id];selId=id;highlight();if(m){map.setView(m.getLatLng(),Math.max(map.getZoom(),17));m.openPopup()}if(matchMedia("(max-width:820px)").matches)$("#map").scrollIntoView({behavior:"smooth"})}
+
+function renderStats(){
+  const by={}; pts.forEach(p=>{const k=p.bairro||"Sem bairro";by[k]=(by[k]||0)+1});
+  const max=Math.max(1,...Object.values(by));
+  const conf=pts.filter(p=>p.coordStatus==="conferida").length;
+  $("#stats").innerHTML=`<strong>Pontos por categoria</strong>`+[...cfg.categorias,SEM_CAT].map(c=>[c,pts.filter(p=>catDe(p)===c).length]).filter(([c,v])=>v||c!==SEM_CAT).map(([c,v])=>
+    `<div class="bar"><span>${esc(c.nome)}</span><i style="width:${v/Math.max(1,pts.length)*100}%;background:${esc(c.cor)}"></i><span>${v}</span></div>`).join("")+`<strong style="display:block;margin-top:8px">Pontos por bairro</strong>`+Object.entries(by).sort((a,b)=>b[1]-a[1]).map(([k,v])=>
+    `<div class="bar"><span>${esc(k)}</span><i style="width:${v/max*100}%"></i><span>${v}</span></div>`).join("")+
+    `<p style="margin:10px 0 0">Licença: ${["licenciado","vencida","em_processo","sem_licenca","nao_verificado"].map(k=>`${pts.filter(p=>statusLic(p)===k).length} ${LIC[k][0].replace(/^Licença /,"").toLowerCase()}`).join(", ")}.<br>Posições conferidas: ${conf} de ${pts.length}.</p>`;
+}
+$("#btnStats").onclick=()=>{const s=$("#stats");s.classList.toggle("on");$("#btnStats").classList.toggle("active",s.classList.contains("on"))};
+
+// ---- edição
+function banner(t){const b=$("#banner");b.textContent=t||"";b.classList.toggle("on",!!t)}
+$("#btnEdit").onclick=()=>{editMode=!editMode;addMode=false;$("#btnEdit").classList.toggle("active",editMode);$("#btnAdd").classList.remove("active");
+  $("#btnEdit").textContent=editMode?"Concluir ajustes":"Ajustar posições";banner(editMode?"Arraste um marcador para a posição correta":"");render()};
+$("#btnAdd").onclick=()=>{addMode=!addMode;editMode=false;$("#btnEdit").classList.remove("active");$("#btnEdit").textContent="Ajustar posições";
+  $("#btnAdd").classList.toggle("active",addMode);banner(addMode?"Clique no mapa onde fica o novo ponto":"");render()};
+map.on("click",e=>{if(!addMode)return;addMode=false;$("#btnAdd").classList.remove("active");banner("");openForm(null,e.latlng)});
+
+async function savePos(id,ll){
+  try{await db.doc(`${COL}/${id}`).update({lat:+ll.lat.toFixed(6),lng:+ll.lng.toFixed(6),coordStatus:"conferida",atualizadoEm:new Date().toISOString(),...autor()});toast("Posição salva")}
+  catch(e){toast("Não foi possível salvar a posição: "+(e.message||e.code));render()}
+}
+function openForm(id,ll){
+  const f=$("#frm"), p=id?pts.find(x=>x.id===id):null; editingId=id;
+  f.reset(); $("#dlgTitle").textContent=p?"Editar ponto":"Novo ponto"; $("#btnDel").hidden=!p;
+  const d=p?{zona:"urbana",licenca:"nao_verificado",...p}:{zona:(noUrb(ll.lat,ll.lng)?"urbana":"rural"),categoria:(cfg.categorias[0]||{}).id||"",licenca:"nao_verificado",coordStatus:"conferida",lat:+ll.lat.toFixed(6),lng:+ll.lng.toFixed(6)};
+  for(const k of ["nome","endereco","bairro","zona","categoria","horario","destaque","nota","licenca","licencaNumero","licencaValidade","lat","lng","coordStatus"]) if(d[k]!=null) f.elements[k].value=d[k];
+  const marcadas=new Set(Array.isArray(d.tags)?d.tags:[]);
+  $("#fsTags").hidden=!cfg.tags.length;
+  $("#tagsBox").innerHTML=cfg.tags.map(tg=>`<label class="tagchip" style="border-color:${esc(tg.cor)}"><input type="checkbox" value="${esc(tg.id)}" ${marcadas.has(tg.id)?"checked":""}>${esc(tg.nome)}</label>`).join("");
+  desarmarExclusao(); map.closePopup(); $("#dlg").showModal();
+}
+$("#btnCancel").onclick=()=>$("#dlg").close();
+$("#frm").addEventListener("submit",async ev=>{
+  ev.preventDefault(); const f=ev.target, g=k=>f.elements[k].value.trim();
+  const body={nome:g("nome"),endereco:g("endereco"),bairro:g("bairro"),zona:g("zona"),categoria:g("categoria"),horario:g("horario"),destaque:g("destaque"),
+    nota:g("nota")===""?null:Math.min(5,Math.max(0,+g("nota"))),lat:+g("lat"),lng:+g("lng"),tags:[...$("#tagsBox").querySelectorAll("input:checked")].map(i=>i.value),licenca:g("licenca"),licencaNumero:g("licencaNumero"),licencaValidade:g("licencaValidade"),coordStatus:g("coordStatus"),atualizadoEm:new Date().toISOString(),...autor()};
+  if(!body.nome){toast("Informe o nome do ponto");f.elements.nome.focus();return}
+  if(g("lat")===""||g("lng")===""||!isFinite(body.lat)||!isFinite(body.lng)){toast("Informe latitude e longitude válidas");return}
+  if(body.nota!=null&&!isFinite(body.nota)){toast("A nota deve ser um número de 0 a 5");return}
+  $("#btnSave").disabled=true;
+  try{ if(editingId) await db.doc(`${COL}/${editingId}`).update(body); else { body.fonte="Cadastro na plataforma"; await db.collection(COL).add(body);} 
+    $("#dlg").close(); toast(editingId?"Ponto salvo":"Ponto adicionado");}
+  catch(e){toast(e.code==="invalid_argument"?"Você não tem permissão para editar este mapa":"Não foi possível salvar: "+(e.message||e.code))}
+  finally{$("#btnSave").disabled=false}
+});
+let delArmado=false;
+function armarExclusao(){delArmado=true;const b=$("#btnDel");b.textContent="Clique de novo para excluir";b.style.background="var(--bad)";b.style.color="#fff"}
+function desarmarExclusao(){delArmado=false;const b=$("#btnDel");b.textContent="Excluir ponto";b.style.background="";b.style.color="var(--bad)"}
+$("#btnDel").onclick=async()=>{
+  const p=pts.find(x=>x.id===editingId); if(!p) return;
+  if(!delArmado){armarExclusao();return}
+  desarmarExclusao();
+  try{await db.doc(`${COL}/${editingId}`).delete();$("#dlg").close();toast("Ponto excluído")}catch(e){toast("Não foi possível excluir: "+(e.message||e.code))}
+};
+
+// ---- exportação
+// dados em forma de tabela
+const COLS=[["nome","Nome"],["categoria","Categoria"],["endereco","Endereço"],["bairro","Bairro/comunidade"],["zona","Zona"],
+  ["horario","Funcionamento"],["tags","Etiquetas"],["licenca","Licença"],["licencaNumero","Nº licença"],["licencaValidade","Validade"],
+  ["nota","Nota"],["destaque","Destaque"],["lat","Latitude"],["lng","Longitude"],["coordStatus","Posição"]];
+function valor(p,c){
+  if(c==="categoria")return catDe(p).nome;
+  if(c==="tags")return tagsDe(p).map(t=>t.nome).join(", ");
+  if(c==="licenca")return LIC[statusLic(p)][0];
+  if(c==="licencaValidade")return dataBR(p.licencaValidade);
+  if(c==="zona")return (p.zona||"urbana")==="rural"?"Rural":"Urbana";
+  if(c==="coordStatus")return p.coordStatus==="conferida"?"Conferida":"Aproximada";
+  return p[c]==null?"":p[c];
+}
+const ordenados=()=>[...pts].sort((a,b)=>a.nome.localeCompare(b.nome,"pt"));
+
+// ---- Excel (.xlsx escrito na própria página, sem bibliotecas externas)
+const CRC=(()=>{const t=new Int32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c}return t})();
+function crc32(u8){let c=-1;for(let i=0;i<u8.length;i++)c=CRC[(c^u8[i])&0xFF]^(c>>>8);return (c^-1)>>>0}
+const enc=new TextEncoder();
+function zip(files){ // armazenamento sem compressão
+  const parts=[],central=[];let off=0;
+  const u16=n=>[n&255,(n>>8)&255], u32=n=>[n&255,(n>>8)&255,(n>>16)&255,(n>>>24)&255];
+  for(const [nome,texto] of files){
+    const nb=enc.encode(nome), db=enc.encode(texto), c=crc32(db);
+    const loc=Uint8Array.from([...u32(0x04034b50),...u16(20),...u16(0),...u16(0),...u16(0),...u16(0),...u32(c),...u32(db.length),...u32(db.length),...u16(nb.length),...u16(0)]);
+    parts.push(loc,nb,db);
+    central.push(Uint8Array.from([...u32(0x02014b50),...u16(20),...u16(20),...u16(0),...u16(0),...u16(0),...u16(0),...u32(c),...u32(db.length),...u32(db.length),...u16(nb.length),...u16(0),...u16(0),...u16(0),...u16(0),...u32(0),...u32(off)]),nb);
+    off+=loc.length+nb.length+db.length;
+  }
+  const cdSize=central.reduce((a,x)=>a+x.length,0);
+  const fim=Uint8Array.from([...u32(0x06054b50),...u16(0),...u16(0),...u16(files.length),...u16(files.length),...u32(cdSize),...u32(off),...u16(0)]);
+  const total=off+cdSize+fim.length, out=new Uint8Array(total); let p=0;
+  for(const a of [...parts,...central,fim]){out.set(a,p);p+=a.length}
+  return out;
+}
+const xml=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&apos;"}[c])).replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g,"");
+function celula(ref,v){
+  return (typeof v==="number"&&isFinite(v))?`<c r="${ref}"><v>${v}</v></c>`
+    :`<c r="${ref}" t="inlineStr"><is><t xml:space="preserve">${xml(v)}</t></is></c>`;
+}
+function colLetra(i){let s="";i++;while(i>0){const r=(i-1)%26;s=String.fromCharCode(65+r)+s;i=(i-r-1)/26}return s}
+function xlsx(){
+  const linhas=[COLS.map(c=>c[1]),...ordenados().map(p=>COLS.map(([c])=>{
+    const v=valor(p,c); return (c==="nota"||c==="lat"||c==="lng")&&v!==""?Number(v):v}))];
+  const sheet=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetPr><outlinePr/></sheetPr>
+<cols>${COLS.map((c,i)=>`<col min="${i+1}" max="${i+1}" width="${[28,20,34,22,10,26,24,22,14,12,8,40,12,12,12][i]||16}" customWidth="1"/>`).join("")}</cols>
+<sheetData>${linhas.map((l,r)=>`<row r="${r+1}">${l.map((v,c)=>celula(colLetra(c)+(r+1),v)).join("")}</row>`).join("")}</sheetData>
+<autoFilter ref="A1:${colLetra(COLS.length-1)}${linhas.length}"/></worksheet>`;
+  return zip([
+    ["[Content_Types].xml",`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>`],
+    ["_rels/.rels",`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>`],
+    ["xl/workbook.xml",`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Pontos" sheetId="1" r:id="rId1"/></sheets></workbook>`],
+    ["xl/_rels/workbook.xml.rels",`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/></Relationships>`],
+    ["xl/worksheets/sheet1.xml",sheet]]);
+}
+
+// ---- PDF (gerado na própria página)
+function larguraTexto(s,size){let w=0;for(const ch of s){const c=ch.charCodeAt(0);
+  w+= " iljI.,:;'|!".includes(ch)?0.28: "frt()[]-".includes(ch)?0.35: "mwMW@".includes(ch)?0.86: (c>=48&&c<=57)?0.556: (ch>="A"&&ch<="Z")?0.68:0.53}
+  return w*size}
+function quebrar(txt,size,max){const out=[];for(const par of String(txt).split("\n")){let linha="";
+  for(const palavra of par.split(/\s+/)){const t=linha?linha+" "+palavra:palavra;
+    if(larguraTexto(t,size)<=max)linha=t; else {if(linha)out.push(linha); linha=palavra;
+      while(larguraTexto(linha,size)>max&&linha.length>1){let corte=linha.length;while(corte>1&&larguraTexto(linha.slice(0,corte),size)>max)corte--;out.push(linha.slice(0,corte));linha=linha.slice(corte)}}}
+  out.push(linha)} return out}
+const WIN={"\u20ac":128,"\u201a":130,"\u0192":131,"\u201e":132,"\u2026":133,"\u2020":134,"\u2021":135,"\u02c6":136,"\u2030":137,"\u0160":138,"\u2039":139,"\u0152":140,"\u2018":145,"\u2019":146,"\u201c":147,"\u201d":148,"\u2022":149,"\u2013":150,"\u2014":151,"\u02dc":152,"\u2122":153,"\u0161":154,"\u203a":155,"\u0153":156,"\u0178":159};
+function pdfTxt(s){let out="";for(const ch of String(s)){const c=WIN[ch]??ch.charCodeAt(0);
+  if(c>255){out+="?";continue} const b=String.fromCharCode(c);
+  out+= (b==="("||b===")"||b==="\\")?"\\"+b: c<32?" ": b} return out}
+const latin1=s=>{const u=new Uint8Array(s.length);for(let i=0;i<s.length;i++)u[i]=s.charCodeAt(i)&255;return u};
+function pdf(){
+  const A4=[595.28,841.89], M=42, LARGURA=A4[0]-2*M; const paginas=[]; let ops=[], y=0;
+  const linha=(txt,size,bold,gap,cor)=>{const partes=quebrar(txt,size,LARGURA);
+    for(const l of partes){ if(y<M+40){paginas.push(ops);ops=[];y=A4[1]-M}
+      ops.push(`BT /F${bold?2:1} ${size} Tf ${cor||"0 0 0"} rg ${M} ${y.toFixed(1)} Td (${pdfTxt(l)}) Tj ET`); y-=size*1.25 }
+    y-=gap||0};
+  const regua=()=>{ops.push(`0.85 0.82 0.87 RG 0.8 w ${M} ${(y+6).toFixed(1)} m ${(A4[0]-M).toFixed(1)} ${(y+6).toFixed(1)} l S`)};
+  y=A4[1]-M;
+  linha(cfg.titulo.replace(/\n/g," — "),20,true,4);
+  linha(`${pts.length} ponto(s) · gerado em ${new Date().toLocaleDateString("pt-BR")}`,10,false,10,"0.42 0.38 0.45");
+  for(const p of ordenados()){
+    if(y<M+120){paginas.push(ops);ops=[];y=A4[1]-M}
+    regua(); y-=6;
+    linha(p.nome,13,true,2);
+    const meta=[catDe(p).nome,(p.zona||"urbana")==="rural"?"Zona rural":"Zona urbana",p.nota!=null?`nota ${Number(p.nota).toFixed(1)}`:null].filter(Boolean).join(" · ");
+    linha(meta,9.5,false,3,"0.42 0.38 0.45");
+    const campos=[["Endereço",[valor(p,"endereco"),p.bairro].filter(Boolean).join(" — ")],["Funcionamento",p.horario],
+      ["Etiquetas",valor(p,"tags")],["Licença",[valor(p,"licenca"),p.licencaNumero&&"nº "+p.licencaNumero,p.licencaValidade&&"validade "+dataBR(p.licencaValidade)].filter(Boolean).join(" · ")],
+      ["Destaque",p.destaque],["Coordenadas",`${Number(p.lat).toFixed(5)}, ${Number(p.lng).toFixed(5)} (${valor(p,"coordStatus").toLowerCase()})`]];
+    for(const [rot,v] of campos) if(v) linha(`${rot}: ${v}`,10,false,0);
+    y-=10;
+  }
+  paginas.push(ops);
+  const objs=[]; const add=s=>{objs.push(s);return objs.length};
+  const kids=[]; const contIds=[];
+  for(const conteudo of paginas){ const c=add(`<< /Length ${conteudo.join("\n").length} >>\nstream\n${conteudo.join("\n")}\nendstream`); contIds.push(c) }
+  const f1=add("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>");
+  const f2=add("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>");
+  const paiId=objs.length+paginas.length+1;
+  for(let i=0;i<paginas.length;i++){ kids.push(add(`<< /Type /Page /Parent ${paiId} 0 R /MediaBox [0 0 ${A4[0]} ${A4[1]}] /Resources << /Font << /F1 ${f1} 0 R /F2 ${f2} 0 R >> >> /Contents ${contIds[i]} 0 R >>`)) }
+  const pai=add(`<< /Type /Pages /Kids [${kids.map(k=>k+" 0 R").join(" ")}] /Count ${kids.length} >>`);
+  const raiz=add(`<< /Type /Catalog /Pages ${pai} 0 R >>`);
+  let out="%PDF-1.4\n"; const offs=[];
+  objs.forEach((o,i)=>{offs.push(out.length); out+=`${i+1} 0 obj\n${o}\nendobj\n`});
+  const xref=out.length;
+  out+=`xref\n0 ${objs.length+1}\n0000000000 65535 f \n`+offs.map(o=>String(o).padStart(10,"0")+" 00000 n \n").join("");
+  out+=`trailer\n<< /Size ${objs.length+1} /Root ${raiz} 0 R >>\nstartxref\n${xref}\n%%EOF`;
+  return latin1(out);
+}
+function nomeArquivo(ext){return (cfg.titulo.replace(/\s*\n\s*/g,"-").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^A-Za-z0-9]+/g,"-").replace(/^-|-$/g,"").toLowerCase()||"pontos")+"."+ext}
+function baixarArquivo(filename,data,mime){
+  const blob=new Blob([data],{type:mime});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download=filename;document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(url);a.remove()},1000);
+}
+function initDownloads(){
+  $("#btnPdf").hidden=false;$("#btnXls").hidden=false;
+  $("#btnPdf").onclick=()=>{if(!pts.length){toast("Nenhum ponto para exportar");return} baixarArquivo(nomeArquivo("pdf"),pdf().buffer,"application/pdf")};
+  $("#btnXls").onclick=()=>{if(!pts.length){toast("Nenhum ponto para exportar");return} baixarArquivo(nomeArquivo("xlsx"),xlsx().buffer,"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")};
+}
+
+// ---- camadas (ruas urbanas e zona rural)
+function autor(){return typeof meuId==="string"&&meuId?{editadoPor:meuId}:{}}
+const HW={motorway:1,trunk:1,primary:1,primary_link:1,secondary:2,secondary_link:2,tertiary:2,tertiary_link:2,residential:3,unclassified:3,living_street:3,road:3,service:4,track:4,path:5,footway:5,pedestrian:5,cycleway:5,steps:5,bridleway:5};
+const PLACE={town:21,city:21,suburb:25,village:22,hamlet:23,locality:24,isolated_dwelling:24,farm:24,neighbourhood:25,quarter:25,island:26,islet:26};
+const PLACE_NOME={21:"Cidade/distrito",22:"Vila",23:"Povoado",24:"Localidade",25:"Bairro",26:"Ilha"};
+const CAMADAS={ruas:{nome:"Ruas urbanas"},rural:{nome:"Zona rural"}};
+const URB=[-1.100,-46.820,-1.010,-46.720];
+const estado={ruas:{v:null,layer:null,idx:[],on:true,labels:[]},rural:{v:null,layer:null,idx:[],on:true,labels:[]}};
+const canvas=L.canvas({padding:.3});
+function styleRua(k,rural){const s=[null,{w:5,c:"--polpa",o:.55},{w:4,c:"--ink",o:.45},{w:2.6,c:"--muted",o:.75},{w:1.4,c:"--muted",o:.55},{w:1,c:"--muted",o:.45}][k]||{w:1.5,c:"--muted",o:.5};
+  return rural&&k>=3?{...s,c:"--palmeira",dash:k>=4?"4 4":null}:s}
+function dentroLimite(lat,lng){
+  const g=LIMITE.geometry, rings=g.type==="Polygon"?g.coordinates:g.coordinates.flat(); let c=false; // par-ímpar em todos os anéis
+  for(const r of rings){for(let i=0,j=r.length-1;i<r.length;j=i++){const [xi,yi]=r[i],[xj,yj]=r[j];
+    if(((yi>lat)!==(yj>lat))&&(lng<(xj-xi)*(lat-yi)/(yj-yi)+xi))c=!c}}
+  return c;
+}
+const noUrb=(a,b)=>a>=URB[0]&&a<=URB[2]&&b>=URB[1]&&b<=URB[3];
+function compactar(gj,rural){
+  const out=[]; const feats=gj&&gj.type==="FeatureCollection"?gj.features:[];
+  for(const f of feats){ const g=f.geometry; if(!g) continue;
+    const p=f.properties||{}, tags=p.tags||p, n=tags.name||"";
+    if(g.type==="Point"){ if(!rural) continue; const k=PLACE[tags.place]; if(!k||!n) continue;
+      const [x,y]=g.coordinates; if(!dentroLimite(y,x)||(k===25&&noUrb(y,x))) continue;
+      out.push([n,k,[Math.round(y*1e5),Math.round(x*1e5)]]); continue; }
+    const hw=tags.highway; if(!hw) continue; const k=HW[hw]||3;
+    const lines=g.type==="LineString"?[g.coordinates]:g.type==="MultiLineString"?g.coordinates:g.type==="Polygon"?g.coordinates:[];
+    for(const ln of lines){
+      if(rural){ if(!ln.some(([x,y])=>dentroLimite(y,x))) continue; if(ln.every(([x,y])=>noUrb(y,x))) continue; }
+      const flat=[];let pl,pg;for(const [x,y] of ln){const a=Math.round(y*1e5),b=Math.round(x*1e5);if(a===pl&&b===pg)continue;flat.push(a,b);pl=a;pg=b}
+      if(flat.length>=4) out.push([n,k,flat]);}
+  }
+  return out;
+}
+function tierZoom(k){return k===21||k===26?9:k===22?11:k===23?12:14}
+function atualizarRotulos(){const z=map.getZoom(),st=estado.rural;
+  for(const {k,lg} of st.labels){const vis=st.on&&z>=tierZoom(k); if(vis&&!map.hasLayer(lg))lg.addTo(map); if(!vis&&map.hasLayer(lg))map.removeLayer(lg)}}
+map.on("zoomend",atualizarRotulos);
+function desenharCamada(id,lista){
+  const st=estado[id], rural=id==="rural";
+  if(st.layer){map.removeLayer(st.layer);st.layer=null}
+  (st.labels||[]).forEach(x=>map.removeLayer(x.lg)); st.labels=[];
+  st.idx=[]; const lg=L.layerGroup(); const tiers={};
+  for(const [n,k,flat] of lista){
+    if(k>20){ const ll=[flat[0]/1e5,flat[1]/1e5]; st.idx.push({n,k,c:[ll],place:true});
+      (tiers[k]=tiers[k]||L.layerGroup());
+      L.circleMarker(ll,{renderer:canvas,radius:k===21?6:k===22?5:3.5,color:"#fff",weight:1.5,fillColor:css("--palmeira"),fillOpacity:1})
+        .bindTooltip(`<b>${esc(n)}</b><br>${PLACE_NOME[k]||""}`,{permanent:true,direction:"right",offset:[6,0],className:"street-tip"}).addTo(tiers[k]);
+      continue; }
+    const c=[];for(let i=0;i<flat.length;i+=2)c.push([flat[i]/1e5,flat[i+1]/1e5]); st.idx.push({n,k,c});
+  }
+  [5,4,3,2,1].forEach(k=>st.idx.filter(r=>!r.place&&r.k===k).forEach(r=>{const s=styleRua(k,rural);
+    const pl=L.polyline(r.c,{renderer:canvas,color:css(s.c),weight:s.w,opacity:s.o,dashArray:s.dash,lineCap:"round"});
+    if(r.n) pl.bindTooltip(r.n,{sticky:true,className:"street-tip"}); pl.addTo(lg)}));
+  st.layer=lg; if(st.on) lg.addTo(map);
+  if(rural){ st.labels=Object.entries(tiers).map(([k,g])=>({k:+k,lg:g})); atualizarRotulos(); }
+  drawGrid(); atualizarBotoesCamada();
+  if(estado.ruas.layer) $("#hintRuas").textContent="Use Ajustar posições e arraste cada marcador para o lugar certo nas ruas.";
+  renderRuasBusca();
+}
+function atualizarBotoesCamada(){
+  for(const id of ["ruas","rural"]){const b=$("#tg-"+id),st=estado[id]; b.hidden=!st.layer; b.setAttribute("aria-pressed",st.on); b.classList.toggle("active",st.on)}
+}
+function alternarCamada(id){const st=estado[id]; st.on=!st.on; if(st.layer){st.on?st.layer.addTo(map):map.removeLayer(st.layer)} if(id==="rural")atualizarRotulos(); atualizarBotoesCamada()}
+$("#tg-ruas").onclick=()=>alternarCamada("ruas"); $("#tg-rural").onclick=()=>alternarCamada("rural");
+function todosIdx(){return [...estado.ruas.idx,...estado.rural.idx]}
+function renderRuasBusca(){
+  const q=$("#q").value.trim().toLowerCase(), box=$("#ruasRes"), idx=todosIdx();
+  if(q.length<3||!idx.length){box.hidden=true;return}
+  const hits=idx.filter(r=>r.n&&r.n.toLowerCase().includes(q));
+  const locs=[...new Set(hits.filter(r=>r.place).map(r=>r.n))].slice(0,5), ruas=[...new Set(hits.filter(r=>!r.place).map(r=>r.n))].slice(0,6);
+  if(!locs.length&&!ruas.length){box.hidden=true;return}
+  box.hidden=false;
+  box.innerHTML=(locs.length?`<div>Localidades: ${locs.map(n=>`<button data-loc="${esc(n)}">${esc(n)}</button>`).join("")}</div>`:"")+
+    (ruas.length?`<div>Ruas e estradas: ${ruas.map(n=>`<button data-rua="${esc(n)}">${esc(n)}</button>`).join("")}</div>`:"");
+  const mob=()=>{if(matchMedia("(max-width:820px)").matches)$("#map").scrollIntoView({behavior:"smooth"})};
+  box.querySelectorAll("[data-rua]").forEach(b=>b.onclick=()=>{
+    const segs=idx.filter(r=>!r.place&&r.n===b.dataset.rua); map.fitBounds(L.latLngBounds(segs.flatMap(s=>s.c)).pad(0.2),{maxZoom:18});
+    const hl=L.layerGroup(segs.map(s=>L.polyline(s.c,{color:css("--palha"),weight:7,opacity:.8}))).addTo(map); setTimeout(()=>map.removeLayer(hl),4000); mob();});
+  box.querySelectorAll("[data-loc]").forEach(b=>b.onclick=()=>{
+    const r=idx.find(x=>x.place&&x.n===b.dataset.loc); if(!estado.rural.on)alternarCamada("rural"); map.setView(r.c[0],Math.max(tierZoom(r.k),14));
+    const hl=L.circleMarker(r.c[0],{radius:18,color:css("--palha"),weight:3,fill:false}).addTo(map); setTimeout(()=>map.removeLayer(hl),4000); mob();});
+}
+let camadaImport="ruas";
+async function importarCamada(id,file){
+  let gj; try{gj=JSON.parse(await file.text())}catch(e){toast("O arquivo não é um GeoJSON válido");return}
+  banner("Processando o arquivo…"); await new Promise(r=>setTimeout(r,30));
+  const lista=compactar(gj,id==="rural");
+  if(!lista.length){banner("");toast(id==="rural"?"Nada da zona rural de Bragança foi encontrado nesse arquivo":"Nenhuma rua encontrada no arquivo");return}
+  const s=JSON.stringify(lista), N=180000, partes=Math.ceil(s.length/N);
+  try{
+    const velho=await db.doc(`camadas/${id}`).get(); const nOld=velho.exists?(velho.data().partes||0):0;
+    for(let i=0;i<partes;i++){ banner(`Salvando ${CAMADAS[id].nome.toLowerCase()} (${i+1}/${partes})…`); await db.doc(`camadas/${id}/partes/p${i}`).set({d:s.slice(i*N,(i+1)*N)}) }
+    const nLoc=lista.filter(x=>x[1]>20).length;
+    await db.doc(`camadas/${id}`).set({partes,trechos:lista.length-nLoc,localidades:nLoc,atualizadoEm:new Date().toISOString(),versao:Date.now(),...autor()});
+    for(let i=partes;i<nOld;i++) await db.doc(`camadas/${id}/partes/p${i}`).delete().catch(()=>{});
+    banner(""); toast(id==="rural"?`${lista.length-nLoc} trechos de estrada e ${nLoc} localidades importados`:`${lista.length} trechos de rua importados`);
+  }catch(e){banner("");toast(e.code==="invalid_argument"?"Só quem pode editar a plataforma importa camadas":"Falha ao salvar: "+(e.message||e.code))}
+}
+function ouvirCamada(id){
+  db.doc(`camadas/${id}`).onSnapshot(async snap=>{
+    const st=estado[id];
+    if(!snap.exists){if(st.layer){map.removeLayer(st.layer);st.layer=null;st.idx=[];(st.labels||[]).forEach(x=>map.removeLayer(x.lg));drawGrid();atualizarBotoesCamada()}return}
+    const m=snap.data(); if(m.versao===st.v) return; st.v=m.versao;
+    try{ const docs=await Promise.all([...Array(m.partes)].map((_,i)=>db.doc(`camadas/${id}/partes/p${i}`).get()));
+      if(docs.some(p=>!p.exists)) return; const s=docs.map(p=>p.data().d).join("");
+      if(m.versao===st.v) desenharCamada(id,JSON.parse(s)); }
+    catch(e){ st.v=null; toast(`A camada “${CAMADAS[id].nome}” não carregou. Recarregue a página.`) }
+  },()=>{});
+}
+$("#btnRuas").onclick=()=>$("#dlgImp").showModal();
+document.querySelectorAll("[data-imp]").forEach(b=>b.onclick=()=>{camadaImport=b.dataset.imp;$("#dlgImp").close();$("#fileRuas").click()});
+$("#fileRuas").onchange=e=>{const f=e.target.files[0]; e.target.value=""; if(f) importarCamada(camadaImport,f)};
+
+// ---- backend (Supabase): substitui o banco interno do Claude por um banco próprio,
+// para que a plataforma funcione hospedada fora do Claude (Netlify, GitHub Pages etc.)
+const sb = (window.CONFIG_SUPABASE && window.supabase)
+  ? window.supabase.createClient(window.CONFIG_SUPABASE.url, window.CONFIG_SUPABASE.anonKey)
+  : null;
+
+function docRef(path){
+  return {
+    async get(){
+      const {data,error}=await sb.from("docs").select("data").eq("path",path).maybeSingle();
+      if(error) throw error;
+      return {exists:!!data, data:()=>data?data.data:undefined};
+    },
+    async set(obj){
+      const {error}=await sb.from("docs").upsert({path,data:obj,atualizado_em:new Date().toISOString()});
+      if(error) throw error;
+    },
+    async update(patch){
+      const {data,error}=await sb.from("docs").select("data").eq("path",path).maybeSingle();
+      if(error) throw error;
+      const merged={...(data?data.data:{}),...patch};
+      const {error:e2}=await sb.from("docs").upsert({path,data:merged,atualizado_em:new Date().toISOString()});
+      if(e2) throw e2;
+    },
+    async delete(){
+      const {error}=await sb.from("docs").delete().eq("path",path);
+      if(error) throw error;
+    },
+    onSnapshot(cb,errCb){
+      let parado=false;
+      const carregar=async()=>{
+        try{
+          const {data,error}=await sb.from("docs").select("data").eq("path",path).maybeSingle();
+          if(error) throw error;
+          if(!parado) cb({exists:!!data, data:()=>data.data});
+        }catch(e){ if(!parado&&errCb) errCb(e); }
+      };
+      carregar();
+      const ch=sb.channel("doc:"+path).on("postgres_changes",{event:"*",schema:"public",table:"docs"},payload=>{
+        const p=(payload.new&&payload.new.path)||(payload.old&&payload.old.path);
+        if(p===path) carregar();
+      }).subscribe();
+      return ()=>{parado=true; sb.removeChannel(ch)};
+    }
+  };
+}
+function collectionRef(prefix){
+  const pfx=prefix+"/";
+  return {
+    async add(obj){
+      const id=(crypto.randomUUID?crypto.randomUUID():Math.random().toString(36).slice(2)).replace(/-/g,"").slice(0,20);
+      const {error}=await sb.from("docs").insert({path:pfx+id,data:obj,atualizado_em:new Date().toISOString()});
+      if(error) throw error;
+      return {id};
+    },
+    doc(id){ return docRef(pfx+id); },
+    onSnapshot(cb,errCb){
+      let parado=false;
+      const carregar=async()=>{
+        try{
+          const {data,error}=await sb.from("docs").select("path,data").like("path",pfx+"%");
+          if(error) throw error;
+          const docs=(data||[]).filter(r=>!r.path.slice(pfx.length).includes("/")).map(r=>({id:r.path.slice(pfx.length),data:()=>r.data}));
+          if(!parado) cb({docs});
+        }catch(e){ if(!parado&&errCb) errCb(e); }
+      };
+      carregar();
+      const ch=sb.channel("col:"+prefix).on("postgres_changes",{event:"*",schema:"public",table:"docs"},payload=>{
+        const p=(payload.new&&payload.new.path)||(payload.old&&payload.old.path)||"";
+        if(p.startsWith(pfx)) carregar();
+      }).subscribe();
+      return ()=>{parado=true; sb.removeChannel(ch)};
+    }
+  };
+}
+
+// ---- autenticação: qualquer visitante cadastra/edita pontos (colaborador);
+// só quem faz login (e-mail e senha criados no Supabase) apaga pontos e muda
+// título, categorias, etiquetas e camadas (responsável).
+function aplicarSessao(session){
+  canAdmin=!!session;
+  meuId=session?("responsavel:"+session.user.email):(localStorage.getItem("mapaAcaiVisitanteId"));
+  const logado=!!session;
+  $("#btnConfig").hidden=!canAdmin;
+  $("#btnRuas").hidden=!canAdmin;
+  $("#btnLogin").textContent=logado?"Sair":"Entrar";
+  $("#btnLogin").title=logado?("Conectado como "+session.user.email):"";
+}
+async function initAuth(){
+  let vid=localStorage.getItem("mapaAcaiVisitanteId");
+  if(!vid){ vid="visitante-"+Math.random().toString(36).slice(2,10); localStorage.setItem("mapaAcaiVisitanteId",vid); }
+  meuId=vid;
+  const {data:{session}}=await sb.auth.getSession();
+  aplicarSessao(session);
+  sb.auth.onAuthStateChange((_ev,session)=>{ aplicarSessao(session); render(); });
+}
+$("#btnLogin").onclick=async()=>{
+  const {data:{session}}=await sb.auth.getSession();
+  if(session){ if(confirm("Sair da conta de responsável?")) await sb.auth.signOut(); return; }
+  $("#dlgLogin").showModal();
+};
+$("#btnLoginCancel").onclick=()=>$("#dlgLogin").close();
+$("#formLogin").onsubmit=async(e)=>{
+  e.preventDefault();
+  const f=e.target, email=f.elements.email.value.trim(), senha=f.elements.senha.value;
+  const btn=f.querySelector("[type=submit]"); btn.disabled=true;
+  const {error}=await sb.auth.signInWithPassword({email,password:senha});
+  btn.disabled=false;
+  if(error){ toast("Não foi possível entrar: "+error.message); return; }
+  f.reset(); $("#dlgLogin").close(); toast("Conectado como responsável");
+};
+
+// ---- dados
+let firstLoad=true;
+async function init(){
+  initDownloads();
+  if(!sb){$("#list").innerHTML='<div class="empty">Configuração do Supabase ausente. Preencha config.js com a URL e a chave do seu projeto.</div>';return}
+  db={doc:docRef,collection:collectionRef};
+  await initAuth();
+  canWrite=true;
+  ouvirCamada("ruas"); ouvirCamada("rural");
+  db.doc("config/geral").onSnapshot(s=>{ if(!s.exists) return; const d=s.data();
+    cfg={titulo:d.titulo||CFG_PADRAO.titulo,subtitulo:d.subtitulo??"",categorias:Array.isArray(d.categorias)&&d.categorias.length?d.categorias:CFG_PADRAO.categorias,tags:Array.isArray(d.tags)?d.tags:[]}; aplicarCfg(); },()=>{});
+  $("#btnAdd").disabled=!canWrite; $("#btnEdit").disabled=!canWrite;
+  db.collection(COL).onSnapshot(snap=>{
+    pts=snap.docs.map(s=>({id:s.id,...s.data()}));
+    render(); if(firstLoad){firstLoad=false;urbanView()}
+  },e=>{$("#list").innerHTML=`<div class="empty">Falha ao carregar os pontos (${esc(e.message||e.code||"erro")}). Recarregue a página.</div>`});
+}
+aplicarCfg();
+init();
+matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",()=>{limite.setStyle({color:css("--muted"),fillColor:css("--terra")});render()});
+</script>
+</body>
+</html>
