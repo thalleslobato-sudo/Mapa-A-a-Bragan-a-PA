@@ -7,3 +7,4 @@
 window.CONFIG_SUPABASE = {
 url: "https://ybwykbijfiqztnwamptg.supabase.co",
 anonKey: "sb_publishable_l8_yPx5Dq1T9fwz7NNx8yQ_CqSmPb3I"
+};
