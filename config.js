@@ -5,6 +5,5 @@
 // Quem protege os dados são as políticas (RLS) criadas pelo arquivo schema.sql.
 // NUNCA coloque aqui a chave "service_role".
 window.CONFIG_SUPABASE = {
-  url: "COLE-AQUI-A-URL-DO-SEU-PROJETO",       // ex.: https://abcdefghijk.supabase.co
-  anonKey: "COLE-AQUI-A-CHAVE-ANON-PUBLICA"
-};
+url: "https://ybwykbijfiqztnwamptg.supabase.co",
+anonKey: "sb_publishable_l8_yPx5Dq1T9fwz7NNx8yQ_CqSmPb3I"
